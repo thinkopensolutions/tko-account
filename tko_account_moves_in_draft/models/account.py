@@ -13,8 +13,9 @@ class AccountInvoice(models.Model):
         ctx.update({'create' : True})
         self = self.with_context(ctx)
         res = super(AccountInvoice, self).create(vals)
-        res.action_move_create()
-        res.move_id.write({'state' : 'draft'})
+        if res.type in ('out_invoice', 'out_refund'):
+            res.action_move_create()
+            res.move_id.write({'state' : 'draft'})
         return res
 
     @api.multi
@@ -22,7 +23,7 @@ class AccountInvoice(models.Model):
         context = self.env.context
         for record in self:
             super(AccountInvoice, record).write(vals)
-            if record.state == 'draft' and 'move_id' not in vals.keys() and 'create' not in context.keys() and 'validate' not in context.keys():
+            if record.type in ('out_invoice', 'out_refund') and record.state == 'draft' and 'move_id' not in vals.keys() and 'create' not in context.keys() and 'validate' not in context.keys():
                 self.env.cr.execute("update account_invoice set move_id = null where id='%s'" %(record.id))
                 move = record.move_id
                 move.line_ids.unlink()
