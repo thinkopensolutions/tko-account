@@ -48,4 +48,6 @@ class AccountInvoice(models.Model):
         for inv in to_open_invoices:
             if not inv.move_id:
                 inv.action_move_create()
+            if inv.move_id and inv.type in ('in_invoice', 'in_refund'):
+                inv.move_id.post()
         return to_open_invoices.invoice_validate()
