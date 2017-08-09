@@ -44,3 +44,12 @@ class account_analytic_account(models.Model):
             return res
         return [(cat.id, " / ".join(reversed(get_names(cat)))) for cat in self]
 
+
+    @api.multi
+    def read(self, fields=None, load='_classic_read'):
+        result = super(account_analytic_account, self).read(fields, load='_classic_read')
+        for rec in result:
+            if rec.get('parent_id'):
+                rec_res = self.browse(rec.get('parent_id')[0])
+                result[0].update({'parent_id': (rec.get('parent_id')[0], rec_res.name)})
+        return result
