@@ -32,3 +32,15 @@ class account_analytic_account(models.Model):
     @api.one
     def _child_compute(self):
         self.child_complete_ids = [(6, 0, [child.id for child in self.child_ids])]
+
+    @api.multi
+    def name_get(self):
+        def get_names(cat):
+            """ Return the list [parent.name, parent.parent_id.name, ...] """
+            res = []
+            while cat:
+                res.append(cat.name)
+                cat = cat.parent_id
+            return res
+        return [(cat.id, " / ".join(reversed(get_names(cat)))) for cat in self]
+
