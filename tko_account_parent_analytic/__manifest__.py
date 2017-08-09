@@ -8,7 +8,7 @@
     'category': 'Accounting',
     'license': 'AGPL-3',
     'website': 'http://tko.tko-br.com',
-    'version': '10.0.0.0.0',
+    'version': '10.0.1',
     'application': False,
     'installable': True,
     'auto_install': False,
