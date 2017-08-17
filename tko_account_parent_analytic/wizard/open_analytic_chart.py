@@ -50,10 +50,10 @@ class OpenAnalyticAccount(models.TransientModel):
 class WizardMultiChartsAccounts(models.TransientModel):
     _inherit = 'wizard.multi.charts.accounts'
 
-    @api.multi
-    def execute(self):
-        res = super(WizardMultiChartsAccounts, self).execute()
-        self.chart_template_id.update_generated_account({},self.code_digits,self.company_id)
-        return res
+    # @api.multi
+    # def execute(self):
+    #     res = super(WizardMultiChartsAccounts, self).execute()
+    #     self.chart_template_id.update_generated_account({},self.code_digits,self.company_id)
+    #     return res
     
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:
