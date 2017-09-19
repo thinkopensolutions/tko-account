@@ -12,7 +12,8 @@
     'application': False,
     'installable': True,
     'auto_install': False,
-    'depends': ['account'],
+    'depends': ['analytic',
+                'account'], # depending only to create menu
     'external_dependencies': {
                                 'python': [],
                                 'bin': [],
