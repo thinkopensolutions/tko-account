@@ -14,7 +14,7 @@ import odoo.addons.decimal_precision as dp
 class AccountAnalyticAccont(models.Model):
     _inherit = 'account.analytic.account'
 
-    account_type = fields.Selection([('n', 'Normal'), ('v', u'View')], default='n', required=True, string=u'Type')
+    account_type = fields.Selection([('normal', 'Normal'), ('view', u'View')], default='normal', required=True, string=u'Type')
 
 
 class account_analytic_account(models.Model):
