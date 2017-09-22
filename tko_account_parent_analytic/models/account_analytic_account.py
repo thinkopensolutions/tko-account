@@ -11,6 +11,11 @@ from odoo.exceptions import UserError, ValidationError
 
 import odoo.addons.decimal_precision as dp
 
+class AccountAnalyticAccont(models.Model):
+    _inherit = 'account.analytic.account'
+
+    account_type = fields.Selection([('n', 'Normal'), ('v', u'View')], default='n', required=True, string=u'Type')
+
 
 class account_analytic_account(models.Model):
     _name = "account.analytic.account"
