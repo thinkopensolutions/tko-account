@@ -28,7 +28,7 @@ class AccountInvoice(models.Model):
                 move.line_ids.unlink()
                 move.unlink()
                 record.action_move_create()
-                record.move_id.write({'state': 'draft'})
+                record.move_id.write({'state': 'draft', 'date':record.date_invoice})
         return True
 
     # can't call super if move is already created
