@@ -18,7 +18,8 @@
                 'account_analytic_default',
                 'account_analytic_plans',
                 'br_account',
-                'tko_br_account_account_analytic_plans',],
+                'tko_br_account_account_analytic_plans',
+                ],
     'external_dependencies': {
         'python': [],
         'bin': [],
