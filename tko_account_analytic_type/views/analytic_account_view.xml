@@ -34,6 +34,16 @@
             </field>
         </field>
     </record>
+    <record id="view_account_analytic_line_form_inherit" model="ir.ui.view">
+        <field name="name">account.analytic.line.form</field>
+        <field name="model">account.analytic.line</field>
+        <field name="inherit_id" ref="analytic.view_account_analytic_line_form"/>
+        <field name="arch" type="xml">
+            <field name="account_id" position="attributes">
+                <attribute name="domain">[('type','=','n')]</attribute>
+            </field>
+        </field>
+    </record>
 
     <record model="ir.ui.view" id="view_analytic_type_form">
         <field name="name">account.analytic.account.type.form</field>
