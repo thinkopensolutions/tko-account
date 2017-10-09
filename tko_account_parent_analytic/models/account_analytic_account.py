@@ -16,6 +16,31 @@ class account_analytic_account(models.Model):
     _name = "account.analytic.account"
     _inherit = "account.analytic.account"
 
+    @api.multi
+    def compute_values(self):
+        domain=[]
+        if self._context.get('from_date', False):
+            domain.append(('date', '>=', self._context['from_date']))
+        if self._context.get('to_date', False):
+            domain.append(('date', '<=', self._context['to_date']))
+        default_domain = domain
+        for account in self:
+            sub_accounts = self.with_context({'show_parent_account':True}).search([('id','child_of',[account.id])])
+            balance = 0.0
+            credit = 0.0
+            debit = 0.0
+            search_domain = default_domain[:]
+            search_domain.insert(0,('account_id','in',sub_accounts.ids))
+            for aml in self.env['account.analytic.line'].search(search_domain):
+                if aml.amount < 0.0:
+                    debit += aml.amount
+                else:
+                    credit +=aml.amount
+                balance += aml.amount
+            account.balance = balance
+            account.credit = credit
+            account.debit = debit
+
     parent_id = fields.Many2one('account.analytic.account', 'Parent Account', ondelete="set null")
     parent_hierarchy = fields.Many2one('account.analytic.account', 'Parent Hierarchy', ondelete="set null")
     child_ids = fields.One2many('account.analytic.account', 'parent_hierarchy', 'Child Accounts')
@@ -23,6 +48,9 @@ class account_analytic_account(models.Model):
                                           string="Account Hierarchy")
     parent_left = fields.Integer('Left Parent', index=1)
     parent_right = fields.Integer('Right Parent', index=1)
+    balance = fields.Monetary(compute='compute_values', string='Balance')
+    debit = fields.Monetary(compute='compute_values', string='Debit')
+    credit = fields.Monetary(compute='compute_values', string='Credit')
 
     _parent_name = "parent_hierarchy"
     _parent_store = True
