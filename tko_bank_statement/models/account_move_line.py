@@ -18,6 +18,8 @@ class AccountMoveLine(models.Model):
         ret_data = []
         for ret in rets:
             line = self.env['account.move.line'].browse(ret['id'])
-            if line.move_id.state != 'draft':
+            inv_id = self.env['account.invoice'].search([('number','=',ret['ref'])])
+            if inv_id.state == 'open':
+            # if line.move_id.state != 'draft':
                 ret_data.append(ret)
         return ret_data
