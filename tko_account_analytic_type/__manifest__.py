@@ -18,7 +18,8 @@
                 'account_analytic_default',
                 'account_analytic_plans',
                 'br_account',
-                'tko_br_account_account_analytic_plans',],
+                'tko_br_account_account_analytic_plans',
+                ],
     'external_dependencies': {
         'python': [],
         'bin': [],
@@ -31,6 +32,7 @@
     'data': [
         'views/analytic_account_view.xml',
         'views/account_invoice_view.xml',
+        'wizard/open_analytic_chart.xml',
              ],
 
 }
