@@ -13,8 +13,9 @@ class AccountInvoice(models.Model):
         ctx.update({'create' : True})
         self = self.with_context(ctx)
         res = super(AccountInvoice, self).create(vals)
-        res.action_move_create()
-        res.move_id.write({'state' : 'draft'})
+        if len(res.invoice_line_ids):
+            res.action_move_create()
+            res.move_id.write({'state' : 'draft'})
         return res
 
     @api.multi
@@ -29,6 +30,10 @@ class AccountInvoice(models.Model):
                 move.unlink()
                 record.action_move_create()
                 record.move_id.write({'state': 'draft', 'date':record.date_invoice})
+            elif record.state =='draft' and not record.move_id and len(record.invoice_line_ids):
+                record.action_move_create()
+                record.move_id.write({'state': 'draft'})
+
         return True
 
     # can't call super if move is already created
