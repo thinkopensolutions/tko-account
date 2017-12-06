@@ -86,7 +86,7 @@ class account_analytic_account(models.Model):
                     debit += aal.amount
                 else:
                     credit += aal.amount
-            account.balance = account.credit - account.debit
+            account.balance = credit - debit
             account.credit = credit
             account.debit = abs(debit)
 
