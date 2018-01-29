@@ -33,11 +33,11 @@ class account_analytic_account(models.Model):
             search_domain.insert(0,('account_id','in',sub_accounts.ids))
             for aml in self.env['account.analytic.line'].search(search_domain):
                 if aml.amount < 0.0:
-                    debit += aml.amount
+                    debit= aml.amount
                 else:
-                    credit +=aml.amount
-            debit = abs(debit)
-            account.balance = debit - credit
+                    credit=aml.amount
+                balance += aml.amount
+            account.balance = balance
             account.credit = credit
             account.debit = debit
 
