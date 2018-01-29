@@ -6,10 +6,7 @@
         <field name="inherit_id" ref="analytic.view_account_analytic_account_form"/>
         <field name="arch" type="xml">
             <field name="partner_id" position="after">
-                <field name="is_parent"/>
                 <field name="type"/>
-                <field name="analytic_account_type_id" string="Analytic Type"/>
-                <field name="analytic_account_type_parent" string="Parent Analytic" readonly="1" context="{'readonly_by_pass': True}"/>
             </field>
         </field>
     </record>
@@ -44,102 +41,5 @@
             </field>
         </field>
     </record>
-
-    <record model="ir.ui.view" id="view_analytic_type_form">
-        <field name="name">account.analytic.account.type.form</field>
-        <field name="model">account.analytic.account.type</field>
-        <field name="type">form</field>
-        <field name="arch" type="xml">
-            <form string="Type">
-                <sheet>
-                    <group>
-                        <field name="analytic_account_type"  string="Type Name"/>
-                        <field name="parent_analytic_account_type_id" string="Parent Account"/>
-                    </group>
-                </sheet>
-            </form>
-        </field>
-    </record>
-
-    <record model="ir.ui.view" id="view_analytic_type_list">
-        <field name="name">account.analytic.account.type.list</field>
-        <field name="model">account.analytic.account.type</field>
-        <field name="type">tree</field>
-        <field name="arch" type="xml">
-            <tree string="Type">
-                <field name="analytic_account_type"/>
-                <field name="parent_analytic_account_type_id"/>
-            </tree>
-        </field>
-    </record>
-
-    <record model="ir.actions.act_window" id="action_analytic_type">
-        <field name="name">Account Analytic Type</field>
-        <field name="type">ir.actions.act_window</field>
-        <field name="res_model">account.analytic.account.type</field>
-        <field name="domain">[]</field>
-        <field name="view_type">form</field>
-        <field name="view_mode">tree,form</field>
-        <field name="view_id" ref="view_analytic_type_list"/>
-    </record>
-    
-    <menuitem name="Analytic Type" id="menu_analytic_type" parent="account.menu_analytic_accounting" action="action_analytic_type"/>
-
-    <record id="view_analytic_type_account_tree" model="ir.ui.view">
-        <field name="name">account.analytic.type.account.tree</field>
-        <field name="model">account.analytic.account</field>
-        <field name="field_parent">child_complete_ids</field>
-        <field name="arch" type="xml">
-            <tree string="Analytic accounts" toolbar="1">
-               <field name="name"/>
-                <field name="code"/>
-                <field name="partner_id"/>
-                <field name="active" invisible="1"/>
-                <field name="company_id" groups="base.group_multi_company"/>
-                <field name="debit"/>
-                <field name="credit"/>
-                <field name="balance"/>
-            </tree>
-        </field>
-    </record>
-
-
-    <record id="open_view_analytic_type_account_tree" model="ir.actions.act_window">
-        <field name="name">Analytic Type Heirarchy</field>
-        <field name="res_model">account.analytic.account</field>
-        <field name="view_type">tree</field>
-        <field name="view_mode">tree,form</field>
-        <field name="view_id" ref="view_analytic_type_account_tree"/>
-        <field name="domain">[('is_parent','=',True)]</field>
-        <field name="context">{'show_parent_account':True}</field>
-    </record>
-
-    <record id="view_account_type_noparent_tree" model="ir.ui.view">
-        <field name="name">account.analytic.type.account.tree</field>
-        <field name="model">account.analytic.account</field>
-        <field name="arch" type="xml">
-            <tree string="Chart of accounts">
-                <field name="name"/>
-                <field name="code"/>
-                <field name="partner_id"/>
-                <field name="active" invisible="1"/>
-                <field name="company_id" groups="base.group_multi_company"/>
-                <field name="debit"/>
-                <field name="credit"/>
-                <field name="balance"/>
-            </tree>
-        </field>
-    </record>
-
-
-    <record id="open_view_analytic_type_account_noparent_tree" model="ir.actions.act_window">
-        <field name="name">Chart of Analytic Heirarchy</field>
-        <field name="res_model">account.analytic.account</field>
-        <field name="view_type">tree</field>
-        <field name="view_mode">tree,form</field>
-        <field name="view_id" ref="view_account_type_noparent_tree"/>
-        <field name="context">{'show_parent_account':True}</field>
-    </record>
-
 
 </odoo>
