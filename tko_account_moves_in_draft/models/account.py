@@ -22,6 +22,8 @@ class AccountInvoice(models.Model):
     def write(self, vals):
         context = self.env.context
         for record in self:
+            old_move_id = record.move_id and record.move_id.id or False
+            old_move = record.move_id
             super(AccountInvoice, record).write(vals)
             if record.state == 'draft' and 'move_id' not in vals.keys() and 'create' not in context.keys() and 'validate' not in context.keys():
                 self.env.cr.execute("update account_invoice set move_id = null where id='%s'" %(record.id))
@@ -33,6 +35,10 @@ class AccountInvoice(models.Model):
             elif record.state =='draft' and not record.move_id and len(record.invoice_line_ids):
                 record.action_move_create()
                 record.move_id.write({'state': 'draft'})
+            # Delete old move in some cases it is left as orphan move in DB
+            elif old_move_id and 'move_id' in vals.keys() and vals['move_id'] and vals['move_id'] != old_move_id:
+                old_move.line_ids.unlink()
+                old_move.unlink()
 
         return True
 
