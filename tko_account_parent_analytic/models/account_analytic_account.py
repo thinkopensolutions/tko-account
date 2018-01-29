@@ -24,11 +24,12 @@ class account_analytic_account(models.Model):
         if self._context.get('to_date', False):
             domain.append(('date', '<=', self._context['to_date']))
         default_domain = domain
+        balance = 0.0
+        credit = 0.0
+        debit = 0.0
         for account in self:
             sub_accounts = self.with_context({'show_parent_account':True}).search([('id','child_of',[account.id])])
-            balance = 0.0
-            credit = 0.0
-            debit = 0.0
+
             search_domain = default_domain[:]
             search_domain.insert(0,('account_id','in',sub_accounts.ids))
             for aml in self.env['account.analytic.line'].search(search_domain):
