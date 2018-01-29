@@ -35,14 +35,13 @@ class account_analytic_account(models.Model):
                 if aml.amount < 0.0:
                     debit += aml.amount
                 else:
-                    credit += aml.amount
-                balance += aml.amount
-            account.balance = balance
+                    credit +=aml.amount
+            debit = abs(debit)
+            account.balance = debit - credit
             account.credit = credit
             account.debit = debit
 
     parent_id = fields.Many2one('account.analytic.account', 'Parent Account', ondelete="set null")
-    parent_hierarchy = fields.Many2one('account.analytic.account', 'Parent Hierarchy', ondelete="set null")
     child_ids = fields.One2many('account.analytic.account', 'parent_id', 'Child Accounts')
     child_complete_ids = fields.Many2many('account.analytic.account','analytic_account_rel', 'analytic_id','analytic_id_col',compute='_child_compute',
                                           string="Account Hierarchy")
@@ -93,24 +92,3 @@ class account_analytic_account(models.Model):
     @api.one
     def _child_compute(self):
         self.child_complete_ids = [(6, 0, [child.id for child in self.child_ids])]
-
-    @api.multi
-    def name_get(self):
-        def get_names(cat):
-            """ Return the list [parent.name, parent.parent_id.name, ...] """
-            res = []
-            while cat:
-                res.append(cat.name)
-                cat = cat.parent_id
-            return res
-        return [(cat.id, " / ".join(reversed(get_names(cat)))) for cat in self]
-
-    @api.multi
-    def read(self, fields=None, load='_classic_read'):
-        result = super(account_analytic_account, self).read(fields, load='_classic_read')
-        for rec in result:
-            if rec.get('parent_id'):
-                rec_res = self.browse(rec.get('parent_id')[0])
-                result[0].update({'parent_id': (rec.get('parent_id')[0], rec_res.name)})
-        return result
-
