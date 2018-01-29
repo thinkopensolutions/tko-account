@@ -36,7 +36,7 @@ class AccountInvoice(models.Model):
                 record.action_move_create()
                 record.move_id.write({'state': 'draft'})
             # Delete old move in some cases it is left as orphan move in DB
-            elif 'move_id' in vals.keys() and vals['move_id'] and vals['move_id'] != old_move_id:
+            elif old_move_id and 'move_id' in vals.keys() and vals['move_id'] and vals['move_id'] != old_move_id:
                 old_move_id.line_ids.unlink()
                 old_move_id.unlink()
 
