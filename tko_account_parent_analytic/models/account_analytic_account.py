@@ -37,7 +37,7 @@ class account_analytic_account(models.Model):
                 else:
                     credit=aml.amount
                 balance= aml.amount
-            account.balance += balance
+            account.balance = balance
             account.credit = credit
             account.debit = debit
 
