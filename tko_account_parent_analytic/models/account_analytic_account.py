@@ -39,7 +39,7 @@ class account_analytic_account(models.Model):
 
             account.balance = debit - credit
             account.credit = credit
-            account.debit = debit
+            account.debit = abs(debit)
 
     parent_id = fields.Many2one('account.analytic.account', 'Parent Account', ondelete="set null")
     child_ids = fields.One2many('account.analytic.account', 'parent_id', 'Child Accounts')
