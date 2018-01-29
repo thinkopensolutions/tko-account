@@ -18,10 +18,11 @@
         <field name="arch" type="xml">
             <xpath expr="//field[@name='account_ids']//field[@name='analytic_account_id']" position="attributes">
                 <attribute name="domain">[('type','=','n'),('company_id', '=', parent.company_id)]</attribute>
-                <!--<attribute name="domain">[('type','=','n')]</attribute>-->
+                
             </xpath>
         </field>
     </record>
+
     <record model="ir.ui.view" id="view_move_form_inherit">
         <field name="name">account.move</field>
         <field name="model">account.move</field>

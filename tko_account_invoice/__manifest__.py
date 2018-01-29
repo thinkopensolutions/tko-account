@@ -3,9 +3,9 @@
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 
 {
-    'name': 'Analytic Account Type',
+    'name': 'Account Invoice',
     'summary': '',
-    'description': 'This module adds type in analytic accounts',
+    'description': 'This module remove default Journal from invoice',
     'author': 'TKO',
     'category': 'Accounting',
     'license': 'AGPL-3',
@@ -14,12 +14,7 @@
     'application': False,
     'installable': True,
     'auto_install': False,
-    'depends': ['analytic',
-                'account_analytic_default',
-                'account_analytic_plans',
-                'br_account',
-                'tko_br_account_account_analytic_plans',
-                ],
+    'depends': ['account'],
     'external_dependencies': {
         'python': [],
         'bin': [],
@@ -29,10 +24,6 @@
     'css': [],
     'demo_xml': [],
     'test': [],
-    'data': [
-        'views/analytic_account_view.xml',
-        'views/account_invoice_view.xml',
-        'wizard/open_analytic_chart.xml',
-             ],
+    'data': [],
 
 }

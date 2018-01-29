@@ -10,12 +10,12 @@
 from odoo import models, fields, api,_
 
 
-class OpenAnalyticAccount(models.TransientModel):
+class OpenAnalyticTypeAccount(models.TransientModel):
     """
     For Chart of Accounts
     """
-    _name = "open.analytic.account"
-    _description = "Open Analytic Accounts"
+    _name = "open.analytic.type.account"
+    _description = "Open Analytic Type Accounts"
 
     date_from = fields.Date(string='Start Date')
     date_to = fields.Date(string='End Date')
@@ -28,7 +28,7 @@ class OpenAnalyticAccount(models.TransientModel):
         return result
 
     @api.multi
-    def account_chart_open_window(self):
+    def account_chart_open_type_window(self):
         """
         Opens chart of Accounts
         @return: dictionary of Open account chart window on given date(s) and all Entries or posted entries
@@ -37,23 +37,14 @@ class OpenAnalyticAccount(models.TransientModel):
         data = self.read([])[0]
         used_context = self._build_contexts(data)
         self  = self.with_context(used_context)
-        if self.env['account.analytic.account'].search([('parent_id','!=',False)],limit=1):
-            result = self.env.ref('tko_account_parent_analytic.open_view_analytic_account_tree').read([])[0]
+        # if self.env['account.analytic.account.type'].search([('parent_analytic_account_type_id','!=',False)],limit=1):
+        if self.env['account.analytic.account'].search([('is_parent','=',False)],limit=1):
+            result = self.env.ref('tko_account_analytic_type.open_view_analytic_type_account_tree').read([])[0]
         else:
-            result = self.env.ref('tko_account_parent_analytic.open_view_analytic_account_noparent_tree').read([])[0]
+            result = self.env.ref('tko_account_analytic_type.open_view_analytic_type_account_noparent_tree').read([])[0]
         result_context = eval(result.get('context','{}')) or {}
         used_context.update(result_context)
         result['context'] = str(used_context)
         return result
 
-
-class WizardMultiChartsAccounts(models.TransientModel):
-    _inherit = 'wizard.multi.charts.accounts'
-
-    @api.multi
-    def execute(self):
-        res = super(WizardMultiChartsAccounts, self).execute()
-        self.chart_template_id.update_generated_account({},self.code_digits,self.company_id)
-        return res
-    
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:
