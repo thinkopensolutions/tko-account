@@ -25,6 +25,7 @@ class OpenAnalyticAccount(models.TransientModel):
         result['date_from'] = data['date_from'] or False
         result['date_to'] = data['date_to'] or False
         result['show_parent_account'] = True
+        result['company_id'] = self.env.user.sudo().company_id.id
         return result
 
     @api.multi
