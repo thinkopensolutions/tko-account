@@ -19,8 +19,8 @@ class account_analytic_account(models.Model):
     @api.multi
     def compute_values(self):
         domain=[]
-        if self._context.get('from_date', False):
-            domain.append(('date', '>=', self._context['from_date']))
+        if self._context.get('date_from', False):
+            domain.append(('date', '>=', self._context['date_from']))
         if self._context.get('to_date', False):
             domain.append(('date', '<=', self._context['to_date']))
         company_id = self.env.user.sudo().company_id.id
@@ -65,8 +65,8 @@ class account_analytic_account(models.Model):
     @api.model
     def _move_domain_get(self, domain=None):
         domain = domain and safe_eval(str(domain)) or []
-        if self._context.get('from_date', False):
-            domain.append(('date', '>=', self._context['from_date']))
+        if self._context.get('date_from', False):
+            domain.append(('date', '>=', self._context['date_from']))
         if self._context.get('to_date', False):
             domain.append(('date', '<=', self._context['to_date']))
         return domain
