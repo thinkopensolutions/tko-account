@@ -23,7 +23,7 @@ class account_analytic_account(models.Model):
             domain.append(('date', '>=', self._context['from_date']))
         if self._context.get('to_date', False):
             domain.append(('date', '<=', self._context['to_date']))
-        company_id = self.env.sudo().user.company_id.id
+        company_id = self.env.user.sudo().company_id.id
         domain += [('company_id', '=', company_id)]
         default_domain = domain
         for account in self:
