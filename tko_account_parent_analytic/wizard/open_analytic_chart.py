@@ -43,12 +43,9 @@ class OpenAnalyticAccount(models.TransientModel):
         data = self.read([])[0]
         used_context = self._build_contexts(data)
         self  = self.with_context(used_context)
-        print "self..............", self._context
         if self.env['account.analytic.account'].search([('parent_id','!=',False)],limit=1):
-            print "IF.......................................",
             result = self.env.ref('tko_account_parent_analytic.open_view_analytic_account_tree').read([])[0]
         else:
-            print "ELSE......................................."
             result = self.env.ref('tko_account_parent_analytic.open_view_analytic_account_noparent_tree').read([])[0]
         result_context = eval(result.get('context','{}')) or {}
         used_context.update(result_context)
