@@ -19,9 +19,14 @@ class OpenAnalyticAccount(models.TransientModel):
 
     date_from = fields.Date(string='Start Date')
     date_to = fields.Date(string='End Date')
+    target_move = fields.Selection([('posted', 'All Posted Entries'),
+                                    ('all', 'All Entries'),
+                                    ], string='Target Moves', required=True, default='posted')
     
     def _build_contexts(self, data):
         result = {}
+        if data['target_move'] == 'posted':
+            result['move_state'] = data['target_move']
         result['date_from'] = data['date_from'] or False
         result['date_to'] = data['date_to'] or False
         result['show_parent_account'] = True
