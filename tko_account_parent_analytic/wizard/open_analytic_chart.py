@@ -19,9 +19,14 @@ class OpenAnalyticAccount(models.TransientModel):
 
     date_from = fields.Date(string='Start Date')
     date_to = fields.Date(string='End Date')
+    target_move = fields.Selection([('posted', 'All Posted Entries'),
+                                    ('all', 'All Entries'),
+                                    ], string='Target Moves', required=True, default='posted')
     
     def _build_contexts(self, data):
         result = {}
+        if data['target_move'] == 'posted':
+            result['move_state'] = data['target_move']
         result['date_from'] = data['date_from'] or False
         result['date_to'] = data['date_to'] or False
         result['show_parent_account'] = True
@@ -38,9 +43,12 @@ class OpenAnalyticAccount(models.TransientModel):
         data = self.read([])[0]
         used_context = self._build_contexts(data)
         self  = self.with_context(used_context)
+        print "self..............", self._context
         if self.env['account.analytic.account'].search([('parent_id','!=',False)],limit=1):
+            print "IF.......................................",
             result = self.env.ref('tko_account_parent_analytic.open_view_analytic_account_tree').read([])[0]
         else:
+            print "ELSE......................................."
             result = self.env.ref('tko_account_parent_analytic.open_view_analytic_account_noparent_tree').read([])[0]
         result_context = eval(result.get('context','{}')) or {}
         used_context.update(result_context)

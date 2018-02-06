@@ -11,6 +11,10 @@ from odoo.exceptions import UserError, ValidationError
 
 import odoo.addons.decimal_precision as dp
 
+class AccountAnalyticLine(models.Model):
+    _inherit = "account.analytic.line"
+
+    move_state = fields.Selection(related='move_id.move_id.state', store=True, string='Move Stage')
 
 class account_analytic_account(models.Model):
     _name = "account.analytic.account"
@@ -25,6 +29,9 @@ class account_analytic_account(models.Model):
             domain.append(('date', '<=', self._context['to_date']))
         company_id = self.env.user.sudo().company_id.id
         domain += [('company_id', '=', company_id)]
+        state = self._context.get('move_state')
+        if state == 'posted':
+            domain += [('move_id.move_id.state', '=', state)]
         default_domain = domain
         for account in self:
             sub_accounts = self.with_context({'show_parent_account':True}).search([('id','child_of',[account.id])])
@@ -65,11 +72,17 @@ class account_analytic_account(models.Model):
     @api.model
     def _move_domain_get(self, domain=None):
         domain = domain and safe_eval(str(domain)) or []
+        state = context.get('state')
+        if state and state.lower() != 'all':
+            domain += [('move_id.move_id.state', '=', state)]
         if self._context.get('date_from', False):
             domain.append(('date', '>=', self._context['date_from']))
         if self._context.get('to_date', False):
             domain.append(('date', '<=', self._context['to_date']))
+        if context.get('company_id'):
+            domain += [('company_id', '=', context['company_id'])]
         return domain
+
 
 
     @api.multi
