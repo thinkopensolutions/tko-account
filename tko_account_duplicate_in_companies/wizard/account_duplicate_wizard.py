@@ -23,7 +23,7 @@ class DuplicateAccounts(models.TransientModel):
         new_accounts = []
         for company in self.company_ids:
             for account in accounts:
-                if company != account.company_id.id:
+                if company.id != account.company_id.id:
                     new_account = account.copy(default={'name': account.name, 'code': account.code, 'company_id': company.id})
                     new_accounts.append(new_account.id)
         return {
