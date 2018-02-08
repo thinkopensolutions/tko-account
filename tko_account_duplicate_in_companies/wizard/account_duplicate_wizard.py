@@ -5,7 +5,7 @@ from odoo import models, fields, api, _
 class DuplicateAccounts(models.TransientModel):
     _name = 'duplicate.accounts'
 
-    company_ids = fields.Many2many('res.company','Company')
+    company_ids = fields.Many2many('res.company', 'company_duplicate_accounts_rel','duplicate_account_id','company_id','Company')
 
     @api.model
     def default_get(self, field_list):
