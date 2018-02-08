@@ -24,7 +24,7 @@ class DuplicateAccounts(models.TransientModel):
         for company in self.company_ids:
             for account in accounts:
                 new_account = account.copy(default={'name': account.name, 'company_id': company.id})
-                new_accounts.append(new_account)
+                new_accounts.append(new_account.id)
         account_tree = self.env.ref('account.view_account_list', False)
         return {
             'name': _('Chart of Accounts'),
