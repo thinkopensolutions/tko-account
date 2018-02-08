@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from odoo import models, api, _
+from odoo import models, fields, api, _
 
 class DuplicateAccounts(models.TransientModel):
     _name = 'duplicate.accounts'
