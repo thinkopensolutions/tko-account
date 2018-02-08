@@ -25,15 +25,12 @@ class DuplicateAccounts(models.TransientModel):
             for account in accounts:
                 new_account = account.copy(default={'name': account.name, 'company_id': company.id})
                 new_accounts.append(new_account.id)
-        account_tree = self.env.ref('account.view_account_list', False)
         return {
             'name': _('Chart of Accounts'),
             'type': 'ir.actions.act_window',
             'view_type': 'form',
             'view_mode': 'tree,form',
             'res_model': 'account.account',
-            'views': [(account_tree.id, 'tree')],
-            'view_id': account_tree.id,
             'domain': [('id', 'in', new_accounts)],
         }
 
