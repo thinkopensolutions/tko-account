@@ -15,11 +15,27 @@ class DuplicateAccounts(models.TransientModel):
         })
         return res
 
-    @api.one
+    @api.multi
     def duplicate_accounts(self):
         self = self.sudo()
         active_ids = self._context.get('active_ids',[])
         accounts = self.env['account.account'].sudo().browse(active_ids)
+        new_accounts = []
         for company in self.company_ids:
-            accounts.copy(default={'company_id' : company.id})
-        return True
+            new_account = accounts.copy(default={'company_id' : company.id})
+            print "account............", new_account
+            new_accounts += new_account
+        account_tree = self.env.ref('account.view_account_list', False)
+        print "new_accounts............................",new_accounts
+        return {
+            'name': _('Chart of Accounts'),
+            'type': 'ir.actions.act_window',
+            'view_type': 'form',
+            'view_mode': 'tree,form',
+            'res_model': 'account.account',
+            'views': [(account_tree.id, 'tree')],
+            'view_id': account_tree.id,
+            'target': 'new',
+            'domain': [('id', 'in', new_accounts)],
+        }
+
