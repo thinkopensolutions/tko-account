@@ -22,11 +22,10 @@ class DuplicateAccounts(models.TransientModel):
         accounts = self.env['account.account'].sudo().browse(active_ids)
         new_accounts = []
         for company in self.company_ids:
-            new_account = accounts.copy(default={'company_id' : company.id})
-            print "account............", new_account
-            new_accounts += new_account
+            for account in accounts:
+                new_account = account.copy(default={'name': account.name, 'company_id': company.id})
+                new_accounts.append(new_account)
         account_tree = self.env.ref('account.view_account_list', False)
-        print "new_accounts............................",new_accounts
         return {
             'name': _('Chart of Accounts'),
             'type': 'ir.actions.act_window',
