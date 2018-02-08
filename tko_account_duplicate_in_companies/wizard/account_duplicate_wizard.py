@@ -34,7 +34,6 @@ class DuplicateAccounts(models.TransientModel):
             'res_model': 'account.account',
             'views': [(account_tree.id, 'tree')],
             'view_id': account_tree.id,
-            'target': 'new',
             'domain': [('id', 'in', new_accounts)],
         }
 
