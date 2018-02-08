@@ -22,8 +22,8 @@ class DuplicateAccounts(models.TransientModel):
         accounts = self.env['account.account'].sudo().browse(active_ids)
         new_accounts = []
         for company in self.company_ids:
-            if company != account.company_id.id:
-                for account in accounts:
+            for account in accounts:
+                if company != account.company_id.id:
                     new_account = account.copy(default={'name': account.name, 'code': account.code, 'company_id': company.id})
                     new_accounts.append(new_account.id)
         return {
