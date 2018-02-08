@@ -11,7 +11,7 @@ class DuplicateAccounts(models.TransientModel):
     def default_get(self, field_list):
         res = super(DuplicateAccounts, self).default_get(field_list)
         res.update({
-            'company_id': [(6, 0, self.env['res.company'].sudo().search([]) )],
+            'company_id': [(6, 0, self.env['res.company'].sudo().search([]).ids )],
         })
         return res
 
