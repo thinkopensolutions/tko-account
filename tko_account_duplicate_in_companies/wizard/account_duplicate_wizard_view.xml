@@ -20,4 +20,14 @@
         </field>
     </record>
 
+    <act_window
+            id="duplicate_accounts_wizard_action"
+            name="Duplicate Accounts"
+            res_model="duplicate.accounts"
+            src_model="account.account"
+            view_id="duplicate_accounts_wizard_form"
+            view_mode="form"
+            target="new"
+            view_type="form"/>
+
 </odoo>
