@@ -30,7 +30,11 @@ class AccountBankStatementLine(models.Model):
             additional_domain = expression.normalize_domain(additional_domain)
         additional_domain = expression.AND([additional_domain, [('move_id.state', '=', 'posted')]])
 
-        return super(AccountBankStatementLine, self).get_move_lines_for_reconciliation(excluded_ids=excluded_ids, str=str,
+        lines = super(AccountBankStatementLine, self).get_move_lines_for_reconciliation(excluded_ids=excluded_ids, str=str,
                                                                                 offset=offset, limit=limit,
                                                                                 additional_domain=additional_domain,
                                                                                 overlook_partner=overlook_partner)
+
+        # return only lines with invoice in open stage because we have moves in draft stage now
+        return lines.filtered(lambda line: line.move_id.invoice_id.state == 'open')
+
