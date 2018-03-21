@@ -24,11 +24,6 @@ class AccountBankStatementLine(models.Model):
             :param additional_domain:
             :param overlook_partner:
         """
-        if additional_domain is None:
-            additional_domain = []
-        else:
-            additional_domain = expression.normalize_domain(additional_domain)
-        additional_domain = expression.AND([additional_domain, [('move_id.state', '=', 'posted')]])
 
         lines = super(AccountBankStatementLine, self).get_move_lines_for_reconciliation(excluded_ids=excluded_ids, str=str,
                                                                                 offset=offset, limit=limit,
