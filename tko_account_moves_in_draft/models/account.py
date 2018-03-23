@@ -42,6 +42,17 @@ class AccountInvoice(models.Model):
 
         return True
 
+    @api.multi
+    def set_move_and_analytic_dates(self, move_id):
+        self.ensure_one()
+        current_date = fields.datetime.now()
+        move_id.date = current_date
+        for mline in move_id.line_ids:
+            for line in mline.analytic_line_ids:
+                line.date = current_date
+        return True
+
+
     # can't call super if move is already created
     # otherwise will create a posted move but we want only to post the non-posted entry
     # This method is not inherited anywhere so it can be maintained here
@@ -61,9 +72,8 @@ class AccountInvoice(models.Model):
                 inv.action_move_create()
             if inv.move_id and inv.type in ('in_invoice', 'in_refund'):
                 inv.move_id.post()
-                inv.move_id.date = fields.datetime.now()
+                set_move_and_analytic_dates(inv.move_id)
             if inv.move_id and inv.type in ('out_invoice', 'out_refund') and inv.partner_id.post_moves == 'o':
                 inv.move_id.post()
-                inv.move_id.date = fields.datetime.now()
-
+                set_move_and_analytic_dates(inv.move_id)
         return to_open_invoices.invoice_validate()
