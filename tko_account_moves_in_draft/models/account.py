@@ -72,8 +72,8 @@ class AccountInvoice(models.Model):
                 inv.action_move_create()
             if inv.move_id and inv.type in ('in_invoice', 'in_refund'):
                 inv.move_id.post()
-                set_move_and_analytic_dates(inv.move_id)
+                self.set_move_and_analytic_dates(inv.move_id)
             if inv.move_id and inv.type in ('out_invoice', 'out_refund') and inv.partner_id.post_moves == 'o':
                 inv.move_id.post()
-                set_move_and_analytic_dates(inv.move_id)
+                self.set_move_and_analytic_dates(inv.move_id)
         return to_open_invoices.invoice_validate()
