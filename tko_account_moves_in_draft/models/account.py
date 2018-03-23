@@ -3,6 +3,27 @@
 from odoo import models, api, _, fields
 from odoo.exceptions import UserError, RedirectWarning, ValidationError
 
+class AccountMove(models.Model):
+    _inherit = 'account.move'
+
+
+    # set date on Account Move and Analytic lines
+    @api.depends('state')
+    def post(self):
+        res = super(AccountMove, self).post()
+        current_date = fields.datetime.now()
+        for move in self:
+            if move.state == 'draft':
+                invoice = move.env['account.invoice'].search([('move_id','=',move.id)])
+                move.date = invoice.date_invoice
+            if move.state == 'posted':
+                move.date = current_date
+                for mline in move.line_ids:
+                    for line in mline.analytic_line_ids:
+                        line.date = current_date
+        return res
+
+
 class AccountInvoice(models.Model):
     _inherit = 'account.invoice'
 
@@ -42,15 +63,15 @@ class AccountInvoice(models.Model):
 
         return True
 
-    @api.multi
-    def set_move_and_analytic_dates(self, move_id):
-        self.ensure_one()
-        current_date = fields.datetime.now()
-        move_id.date = current_date
-        for mline in move_id.line_ids:
-            for line in mline.analytic_line_ids:
-                line.date = current_date
-        return True
+    # @api.multi
+    # def set_move_and_analytic_dates(self, move_id):
+    #     self.ensure_one()
+    #     current_date = fields.datetime.now()
+    #     move_id.date = current_date
+    #     for mline in move_id.line_ids:
+    #         for line in mline.analytic_line_ids:
+    #             line.date = current_date
+    #     return True
 
 
     # can't call super if move is already created
@@ -72,8 +93,6 @@ class AccountInvoice(models.Model):
                 inv.action_move_create()
             if inv.move_id and inv.type in ('in_invoice', 'in_refund'):
                 inv.move_id.post()
-                self.set_move_and_analytic_dates(inv.move_id)
             if inv.move_id and inv.type in ('out_invoice', 'out_refund') and inv.partner_id.post_moves == 'o':
                 inv.move_id.post()
-                self.set_move_and_analytic_dates(inv.move_id)
         return to_open_invoices.invoice_validate()
