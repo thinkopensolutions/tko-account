@@ -11,4 +11,4 @@ from openerp.tools import DEFAULT_SERVER_DATE_FORMAT as OE_DFORMAT
 class ResPartner(models.Model):
     _inherit = 'res.partner'
 
-    unposted_move = fields.Selection([('p',u'padrão'),('c',u'Customizada')], string=u'Rotina Movimento Contábil Customizada Clientes')
+    post_moves = fields.Selection([('o',u'Fatura Aberta'),('p',u'Fatura Paga')], string=u'Lançar movimento em')

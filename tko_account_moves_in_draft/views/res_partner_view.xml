@@ -7,7 +7,7 @@
             <field name="inherit_id" ref="account.view_partner_property_form"/>
             <field name="arch" type="xml">
                 <field name="property_payment_term_id" position="after">
-                    <field name="unposted_move"
+                    <field name="post_moves"
                            attrs="{'required': [('customer','=',True)], 'invisible':[('customer','=',False)]}"/>
                 </field>
             </field>

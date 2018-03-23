@@ -25,14 +25,14 @@ class AccountInvoice(models.Model):
             old_move_id = record.move_id and record.move_id.id or False
             old_move = record.move_id
             super(AccountInvoice, record).write(vals)
-            if record.partner_id.unposted_move == 'c' and record.state == 'draft' and 'move_id' not in vals.keys() and 'create' not in context.keys() and 'validate' not in context.keys():
+            if record.partner_id.post_moves == 'p' and record.state == 'draft' and 'move_id' not in vals.keys() and 'create' not in context.keys() and 'validate' not in context.keys():
                 self.env.cr.execute("update account_invoice set move_id = null where id='%s'" %(record.id))
                 move = record.move_id
                 move.line_ids.unlink()
                 move.unlink()
                 record.action_move_create()
                 record.move_id.write({'state': 'draft', 'date':record.date_invoice})
-            elif record.partner_id.unposted_move == 'c' and record.state =='draft' and not record.move_id and len(record.invoice_line_ids):
+            elif record.partner_id.post_moves == 'p' and record.state =='draft' and not record.move_id and len(record.invoice_line_ids):
                 record.action_move_create()
                 record.move_id.write({'state': 'draft'})
             # Delete old move in some cases it is left as orphan move in DB
@@ -62,7 +62,7 @@ class AccountInvoice(models.Model):
                 inv.action_move_create()
             if inv.move_id and inv.type in ('in_invoice', 'in_refund'):
                 inv.move_id.post()
-            if inv.move_id and inv.type in ('out_invoice', 'out_refund') and inv.partner_id.unposted_move == 'p':
+            if inv.move_id and inv.type in ('out_invoice', 'out_refund') and inv.partner_id.post_moves == 'o':
                 inv.move_id.post()
 
         return to_open_invoices.invoice_validate()
