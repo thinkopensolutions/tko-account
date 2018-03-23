@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="res_partner_view_inherit" model="ir.ui.view">
+            <field name="name">res.partner.form</field>
+            <field name="model">res.partner</field>
+            <field name="inherit_id" ref="account.view_partner_property_form"/>
+            <field name="arch" type="xml">
+                <field name="property_payment_term_id" position="after">
+                    <field name="post_moves"
+                           attrs="{'required': [('customer','=',True)], 'invisible':[('customer','=',False)]}"/>
+                </field>
+            </field>
+        </record>
+    </data>
+</odoo>
