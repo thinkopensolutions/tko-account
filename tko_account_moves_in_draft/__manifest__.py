@@ -24,7 +24,9 @@
     'css': [],
     'demo_xml': [],
     'test': [],
-    'data': ['views/account_invoice_view.xml',
+    'data': [
+        'views/account_invoice_view.xml',
+        'views/res_partner_view.xml',
              ],
 
 }
