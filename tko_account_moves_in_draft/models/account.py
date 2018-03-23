@@ -3,12 +3,6 @@
 from odoo import models, api, _, fields
 from odoo.exceptions import UserError, RedirectWarning, ValidationError
 
-class AccountMove(models.Model):
-    _inherit ='account.move'
-
-    def post(self):
-        self.date = fields.datetime.now()
-        return super(AccountMove, self).post()
 class AccountInvoice(models.Model):
     _inherit = 'account.invoice'
 
@@ -67,7 +61,9 @@ class AccountInvoice(models.Model):
                 inv.action_move_create()
             if inv.move_id and inv.type in ('in_invoice', 'in_refund'):
                 inv.move_id.post()
+                inv.move_id.date = fields.datetime.now()
             if inv.move_id and inv.type in ('out_invoice', 'out_refund') and inv.partner_id.post_moves == 'o':
                 inv.move_id.post()
+                inv.move_id.date = fields.datetime.now()
 
         return to_open_invoices.invoice_validate()
