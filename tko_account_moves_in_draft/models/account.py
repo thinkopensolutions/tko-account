@@ -63,6 +63,7 @@ class AccountInvoice(models.Model):
                 inv.move_id.post()
                 inv.move_id.date = fields.datetime.now()
             if inv.move_id and inv.type in ('out_invoice', 'out_refund') and inv.partner_id.post_moves == 'o':
-                inv.move_id.move_id.post()
+                inv.move_id.post()
+                inv.move_id.date = fields.datetime.now()
 
         return to_open_invoices.invoice_validate()
