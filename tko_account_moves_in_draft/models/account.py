@@ -1,8 +1,14 @@
 # -*- coding: utf-8 -*-
 
-from odoo import models, api, _
+from odoo import models, api, _, fields
 from odoo.exceptions import UserError, RedirectWarning, ValidationError
 
+class AccountMove(models.Model):
+    _inherit ='account.move'
+
+    def post(self):
+        self.date = fields.datetime.now()
+        return super(AccountMove, self).post()
 class AccountInvoice(models.Model):
     _inherit = 'account.invoice'
 
