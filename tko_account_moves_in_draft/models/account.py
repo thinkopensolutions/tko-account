@@ -3,40 +3,35 @@
 from odoo import models, api, _, fields
 from odoo.exceptions import UserError, RedirectWarning, ValidationError
 
+
 class AccountMove(models.Model):
     _inherit = 'account.move'
 
-
-    # set date on Account Move and Analytic lines
+    # set current date on Account Move and Analytic lines
     @api.depends('state')
     def post(self):
         res = super(AccountMove, self).post()
         current_date = fields.datetime.now()
         for move in self:
-            if move.state == 'draft':
-                invoice = move.env['account.invoice'].search([('move_id','=',move.id)])
-                move.date = invoice.date_invoice
-            if move.state == 'posted':
-                move.date = current_date
-                for mline in move.line_ids:
-                    for line in mline.analytic_line_ids:
-                        line.date = current_date
+            move.date = current_date
+            for mline in move.line_ids:
+                for line in mline.analytic_line_ids:
+                    line.date = current_date
         return res
 
 
 class AccountInvoice(models.Model):
     _inherit = 'account.invoice'
 
-
     @api.model
-    def create(self,vals):
+    def create(self, vals):
         ctx = dict(self._context)
-        ctx.update({'create' : True})
+        ctx.update({'create': True})
         self = self.with_context(ctx)
         res = super(AccountInvoice, self).create(vals)
         if len(res.invoice_line_ids):
             res.action_move_create()
-            res.move_id.write({'state' : 'draft'})
+            res.move_id.write({'state': 'draft', 'date': res.date_invoice})
         return res
 
     @api.multi
@@ -47,15 +42,15 @@ class AccountInvoice(models.Model):
             old_move = record.move_id
             super(AccountInvoice, record).write(vals)
             if record.state == 'draft' and 'move_id' not in vals.keys() and 'create' not in context.keys() and 'validate' not in context.keys():
-                self.env.cr.execute("update account_invoice set move_id = null where id='%s'" %(record.id))
+                self.env.cr.execute("update account_invoice set move_id = null where id='%s'" % (record.id))
                 move = record.move_id
                 move.line_ids.unlink()
                 move.unlink()
                 record.action_move_create()
-                record.move_id.write({'state': 'draft', 'date':record.date_invoice})
-            elif record.state =='draft' and not record.move_id and len(record.invoice_line_ids):
+                record.set_move_and_analytic_date()
+            elif record.state == 'draft' and not record.move_id and len(record.invoice_line_ids):
                 record.action_move_create()
-                record.move_id.write({'state': 'draft'})
+                record.set_move_and_analytic_date()
             # Delete old move in some cases it is left as orphan move in DB
             elif old_move_id and 'move_id' in vals.keys() and vals['move_id'] and vals['move_id'] != old_move_id:
                 old_move.line_ids.unlink()
@@ -63,16 +58,16 @@ class AccountInvoice(models.Model):
 
         return True
 
-    # @api.multi
-    # def set_move_and_analytic_dates(self, move_id):
-    #     self.ensure_one()
-    #     current_date = fields.datetime.now()
-    #     move_id.date = current_date
-    #     for mline in move_id.line_ids:
-    #         for line in mline.analytic_line_ids:
-    #             line.date = current_date
-    #     return True
-
+    # set accout move to unposted
+    # set move date and analytic entries date from invoice
+    @api.multi
+    def set_move_and_analytic_date(self):
+        for record in self:
+            record.move_id.write({'state': 'draft', 'date': record.date_invoice})
+            for mline in record.move_id.line_ids:
+                for line in mline.analytic_line_ids:
+                    line.date = record.date_invoice
+        return True
 
     # can't call super if move is already created
     # otherwise will create a posted move but we want only to post the non-posted entry
