@@ -2,8 +2,10 @@
 
 from odoo import models, api, _, fields
 from odoo.exceptions import UserError, RedirectWarning, ValidationError
-
-
+from odoo import tools
+from odoo import SUPERUSER_ID
+from odoo.tools.misc import DEFAULT_SERVER_DATETIME_FORMAT as DTF
+import pytz
 class AccountMove(models.Model):
     _inherit = 'account.move'
 
@@ -11,7 +13,10 @@ class AccountMove(models.Model):
     @api.depends('state')
     def post(self):
         res = super(AccountMove, self).post()
-        current_date = fields.datetime.now()
+        tz = pytz.timezone(self.env['res.users'].browse(SUPERUSER_ID).partner_id.tz) or pytz.utc
+        current_date = pytz.utc.localize(fields.datetime.now()).astimezone(tz)
+        current_date = current_date.strftime(tools.DEFAULT_SERVER_DATE_FORMAT)
+
         for move in self:
             invoice = self.env['account.invoice'].search([('move_id','=',move.id)])
             if len(invoice):
