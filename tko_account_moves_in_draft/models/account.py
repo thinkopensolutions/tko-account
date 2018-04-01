@@ -13,10 +13,12 @@ class AccountMove(models.Model):
         res = super(AccountMove, self).post()
         current_date = fields.datetime.now()
         for move in self:
-            move.date = current_date
-            for mline in move.line_ids:
-                for line in mline.analytic_line_ids:
-                    line.date = current_date
+            invoice = self.env['account.invoice'].search([('move_id','=',move.id)])
+            if len(invoice):
+                move.date = current_date
+                for mline in move.line_ids:
+                    for line in mline.analytic_line_ids:
+                        line.date = current_date
         return res
 
 
