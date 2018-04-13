@@ -17,7 +17,7 @@
         <field name="inherit_id" ref="account_analytic_plans.view_invoice_line_form_inherit"/>
         <field name="arch" type="xml">
             <xpath expr="//field[@name='account_ids']//field[@name='analytic_account_id']" position="attributes">
-                <attribute name="domain">[('type','=','n'),('company_id', '=', parent.company_id)]</attribute>
+                <attribute name="domain">[('type','=','n')]</attribute>
                 <!--<attribute name="domain">[('type','=','n')]</attribute>-->
             </xpath>
         </field>
