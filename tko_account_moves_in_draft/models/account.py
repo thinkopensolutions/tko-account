@@ -19,7 +19,7 @@ class AccountMove(models.Model):
 
         for move in self:
             invoice = self.env['account.invoice'].search([('move_id','=',move.id)])
-            if len(invoice):
+            if len(invoice) and invoice.type == 'out_invoice':
                 move.date = current_date
                 for mline in move.line_ids:
                     for line in mline.analytic_line_ids:
